@@ -25,7 +25,13 @@ This is a ready-to-use Docker Compose template. Replace the placeholder domains 
 
 ## Setup
 
-1. Clone the repo and enter the directory.
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/bmiles-git/n8n-self-hosted.git
+   cd n8n-self-hosted
+   ```
+
 2. Copy the example env file and edit it:
 
    ```bash
