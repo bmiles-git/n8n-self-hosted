@@ -1,0 +1,15 @@
+# Minimal settings that enable JSON output for n8n.
+# See https://docs.searxng.org/admin/settings/
+
+use_default_settings: true
+
+search:
+  formats:
+    - html
+    - json
+
+server:
+  # Overridden by SEARXNG_SECRET / SEARXNG_BASE_URL if set
+  secret_key: "change-me"
+  limiter: false
+  image_proxy: false
