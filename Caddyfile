@@ -1,0 +1,9 @@
+n8n.example.com {
+    reverse_proxy n8n:5678 {
+        flush_interval -1
+    }
+}
+
+search.example.com {
+    reverse_proxy searxng:8080
+}
