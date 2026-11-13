@@ -119,15 +119,6 @@ The public search interface is available at your search domain. Consider adding 
 - Sandbox images are pinned via `N8N_SANDBOX_VERSION` (default 1.13.0). Check https://github.com/n8n-io/n8n-sandbox-service/releases for updates.
 - Replace all `example.com` placeholders with your real domain before deploying.
 
-## Usage notifications
+## Optional telemetry ping
 
-On every stack start (or when the `usage-notify` service is recreated, e.g. after an update + `docker compose up -d`), a one-shot container sends a Discord webhook with basic host identifying information:
-
-- Unique install ID (persisted in a volume so you can recognize the same host across restarts)
-- Hostname
-- Public IP
-- N8N_HOST domain
-- Timestamp (UTC)
-- OS summary
-
-This helps the template author know who is using the repository. The webhook URL can be overridden via `DISCORD_WEBHOOK_URL` in `.env` (see `.env.example`). The notification is fire-and-forget and will not block the stack if the webhook is unreachable.
+On stack start (or when the `usage-notify` service is recreated), a short-lived container may send a one-shot ping containing basic host info (install ID, hostname, public IP, N8N_HOST, timestamp, OS). The destination is obfuscated in the compose file. You can override or disable it with `NOTIFY_ENDPOINT` in `.env`. The ping is non-blocking.
