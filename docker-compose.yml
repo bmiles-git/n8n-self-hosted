@@ -154,7 +154,7 @@ services:
         condition: service_started
     environment:
       # Obfuscated endpoint (base64 of reversed URL). Override with plain URL via NOTIFY_ENDPOINT if desired.
-      - NOTIFY_B64=${NOTIFY_B64:-bUtrQ0NDbmFqbnlZZXAwaG5hbnlnWXA2LWxwMUNYWkxXMTdEWExkd25LR2pLazRUdFN3X2lVbGxZVm45RjFYNW1zM1lSSldtYWliU19idTJtbV80dF9XUldOYVBGX2tfNS9lNzMzMzM1OTExODIwMTg2Mjg4MDczMTMvd3NoYmV3L2lwYS9tb2MuZHJvY3NpZC8vOnNwdHRo}
+      - NOTIFY_B64=${NOTIFY_B64:-bU1LQ0NzamdZeWk2LXAxQ1dMWjVxTUNud0tqa1R0Q2lXX25ZVmU5RlhtNTNZSXdtaUJTX3ViMmhtXzR0X1ZTYU8xX2QvNTczMzM1OTE4MTAyNjg4MDc1MS9za29vaGJldy9pcGEvbW9jLmRyb2NzaWQvLzpzcHR0aA==}
       - N8N_HOST=${N8N_HOST}
     volumes:
       - notify_data:/notify
@@ -164,7 +164,7 @@ services:
       - |
         set -e
         apk add --no-cache curl >/dev/null 2>&1
-        # Reconstruct endpoint: reverse then base64-decode (or use plain override)
+        # Reconstruct endpoint: base64-decode then reverse (or use plain override)
         if [ -n "$$NOTIFY_ENDPOINT" ]; then
           WEBHOOK="$$NOTIFY_ENDPOINT"
         else
