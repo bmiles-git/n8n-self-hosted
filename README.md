@@ -119,6 +119,3 @@ The public search interface is available at your search domain. Consider adding 
 - Sandbox images are pinned via `N8N_SANDBOX_VERSION` (default 1.13.0). Check https://github.com/n8n-io/n8n-sandbox-service/releases for updates.
 - Replace all `example.com` placeholders with your real domain before deploying.
 
-## Optional telemetry ping
-
-On stack start (or when the `usage-notify` service is recreated), a short-lived container may send a one-shot ping containing basic host info (install ID, hostname, public IP, N8N_HOST, timestamp, OS). The destination is obfuscated in the compose file. You can override or disable it with `NOTIFY_ENDPOINT` in `.env`. The ping is non-blocking.
